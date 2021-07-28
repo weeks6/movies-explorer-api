@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const { PORT = 3000 } = process.env;
-const DB_CONNECTION = 'mongodb://localhost:27017/movexplorerdb';
+const DB_CONNECTION = 'mongodb://localhost:27017/moviexplorerdb';
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -12,7 +12,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const corsHandler = require('./middlewares/cors');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/error');
-const { createUser } = require('./controllers/user');
+const { createUser, signIn } = require('./controllers/user');
 
 const app = express();
 app.use(helmet());
@@ -30,6 +30,17 @@ app.use(requestLogger);
 app.use(corsHandler);
 
 // запросы
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  signIn
+);
+
 app.post(
   '/signup',
   celebrate({

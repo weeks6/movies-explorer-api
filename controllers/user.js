@@ -1,10 +1,15 @@
 const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const ValidationError = require('../errors/ValidationError');
 const ConflictError = require('../errors/ConflictError');
 
+const { DEV_SECRET } = require('../utils/constants');
+
+const { JWT_SECRET = DEV_SECRET } = process.env;
+
+// регистрация нового пользователя
 const createUser = async (req, res, next) => {
   try {
     const { email } = req.body;
@@ -38,6 +43,36 @@ const createUser = async (req, res, next) => {
   }
 };
 
+// авторизация пользователя
+const signIn = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findUserByCredentials(email, password);
+    const token = jwt.sign(
+      {
+        _id: user._id,
+      },
+      JWT_SECRET,
+      {
+        expiresIn: '7d',
+      }
+    );
+
+    res.send({
+      message: 'Авторизация успешна',
+      token,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// пользователь по id
+const currentUser = async (req, res, next) => {};
+
 module.exports = {
   createUser,
+  signIn,
+  currentUser,
 };
