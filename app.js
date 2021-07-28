@@ -12,6 +12,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const corsHandler = require('./middlewares/cors');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/error');
+const { createUser } = require('./controllers/user');
 
 const app = express();
 app.use(helmet());
@@ -29,7 +30,19 @@ app.use(requestLogger);
 app.use(corsHandler);
 
 // запросы
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+      name: Joi.string().min(2).max(30),
+    }),
+  }),
+  createUser
+);
 
+// ошибки
 app.use(errorLogger);
 app.use(notFound);
 app.use(errors());
