@@ -4,6 +4,7 @@ const User = require('../models/user');
 
 const ValidationError = require('../errors/ValidationError');
 const ConflictError = require('../errors/ConflictError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const { DEV_SECRET } = require('../utils/constants');
 
@@ -69,10 +70,53 @@ const signIn = async (req, res, next) => {
 };
 
 // пользователь по id
-const currentUser = async (req, res, next) => {};
+const currentUser = async (req, res, next) => {
+  try {
+    const { _id } = req.user;
+
+    const user = await User.findOne({ _id });
+
+    if (!user) {
+      throw new NotFoundError('Не найдено');
+    }
+
+    res.send(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// обновление инфы о пользователе
+const updateCurrentUser = async (req, res, next) => {
+  const { _id } = req.user;
+  const user = {
+    ...req.body,
+  };
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id },
+      { ...user },
+      { new: true, runValidators: true }
+    );
+
+    res.send(updatedUser);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      next(new ValidationError(err.message));
+    }
+
+    if (err.name === 'MongoError' && err.code === 11000) {
+      next(new ConflictError('При создании пользователя что-то пошло не так'));
+    }
+
+    next(err);
+  }
+};
 
 module.exports = {
   createUser,
   signIn,
   currentUser,
+  updateCurrentUser,
 };

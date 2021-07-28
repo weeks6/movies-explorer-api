@@ -14,6 +14,8 @@ const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/error');
 const { createUser, signIn } = require('./controllers/user');
 
+const userRouter = require('./routes/user');
+
 const app = express();
 app.use(helmet());
 app.use(express.json());
@@ -22,6 +24,7 @@ mongoose.connect(DB_CONNECTION, {
   useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 
 app.use(requestLogger);
@@ -52,6 +55,8 @@ app.post(
   }),
   createUser
 );
+
+app.use(userRouter);
 
 // ошибки
 app.use(errorLogger);
