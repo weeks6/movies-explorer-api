@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const { PORT = 3000 } = process.env;
-const DB_CONNECTION = 'mongodb://localhost:27017/moviexplorerdb';
+const { DB_CONNECTION = 'mongodb://localhost:27017/moviexplorerdb' } = process.env;
 
 const express = require('express');
 const mongoose = require('mongoose');
