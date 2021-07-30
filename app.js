@@ -15,6 +15,7 @@ const errorHandler = require('./middlewares/error');
 const { createUser, signIn } = require('./controllers/user');
 
 const userRouter = require('./routes/user');
+const movieRouter = require('./routes/movie');
 
 const app = express();
 app.use(helmet());
@@ -57,6 +58,7 @@ app.post(
 );
 
 app.use(userRouter);
+app.use(movieRouter);
 
 // ошибки
 app.use(errorLogger);
