@@ -33,7 +33,7 @@ async function findUserByCredentials(email, password) {
 
   if (!user) {
     return Promise.reject(
-      new UnauthorizedError('Неправильные почта или пароль')
+      new UnauthorizedError('Неправильные почта или пароль'),
     );
   }
 
@@ -41,7 +41,7 @@ async function findUserByCredentials(email, password) {
 
   if (!matched) {
     return Promise.reject(
-      new UnauthorizedError('Неправильные почта или пароль')
+      new UnauthorizedError('Неправильные почта или пароль'),
     );
   }
   return user;

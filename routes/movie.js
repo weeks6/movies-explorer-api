@@ -26,7 +26,7 @@ router.post(
     }),
   }),
   auth,
-  createMovie
+  createMovie,
 );
 
 router.delete(
@@ -37,7 +37,7 @@ router.delete(
     }),
   }),
   auth,
-  deleteMovie
+  deleteMovie,
 );
 
 module.exports = router;

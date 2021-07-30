@@ -15,7 +15,7 @@ router.patch(
     }),
   }),
   auth,
-  updateCurrentUser
+  updateCurrentUser,
 );
 
 module.exports = router;

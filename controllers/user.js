@@ -57,7 +57,7 @@ const signIn = async (req, res, next) => {
       JWT_SECRET,
       {
         expiresIn: '7d',
-      }
+      },
     );
 
     res.send({
@@ -97,7 +97,7 @@ const updateCurrentUser = async (req, res, next) => {
     const updatedUser = await User.findByIdAndUpdate(
       { _id },
       { ...user },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     res.send(updatedUser);

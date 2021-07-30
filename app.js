@@ -42,7 +42,7 @@ app.post(
       password: Joi.string().required().min(8),
     }),
   }),
-  signIn
+  signIn,
 );
 
 app.post(
@@ -54,7 +54,7 @@ app.post(
       name: Joi.string().min(2).max(30),
     }),
   }),
-  createUser
+  createUser,
 );
 
 app.use(userRouter);
