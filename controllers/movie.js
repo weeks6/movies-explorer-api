@@ -4,6 +4,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
 const Movie = require('../models/movie');
+const { NOT_FOUND, NO_RIGHTS, CAST_ERROR } = require('../utils/errorMessages');
 
 const getMovies = async (req, res, next) => {
   try {
@@ -30,9 +31,9 @@ const createMovie = async (req, res, next) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       next(new ValidationError(err.message));
+    } else {
+      next(err);
     }
-
-    next(err);
   }
 };
 
@@ -43,21 +44,21 @@ const deleteMovie = async (req, res, next) => {
     const movieToDelete = await Movie.findOne({ _id: movieId });
 
     if (!movieToDelete) {
-      throw new NotFoundError('Карточка не найдена');
+      throw new NotFoundError(NOT_FOUND);
     }
 
     if (movieToDelete.owner.toString() !== _id) {
-      throw new ForbiddenError('Нет прав');
+      throw new ForbiddenError(NO_RIGHTS);
     }
 
     const removedMovie = await Movie.deleteOne({ _id: movieId }).orFail();
     res.send(removedMovie);
   } catch (err) {
     if (err.name === 'CastError') {
-      next(new BadRequestError('С запросом что-то не так'));
+      next(new BadRequestError(CAST_ERROR));
+    } else {
+      next(err);
     }
-
-    next(err);
   }
 };
 

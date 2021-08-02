@@ -4,12 +4,12 @@ const auth = require('../middlewares/auth');
 
 const validateURL = require('../utils/validateURL');
 
-// const validateURL = require('../utils/validateURL');
 const { getMovies, createMovie, deleteMovie } = require('../controllers/movie');
 
 router.get('/movies', auth, getMovies);
 router.post(
   '/movies',
+  auth,
   celebrate({
     body: Joi.object().keys({
       country: Joi.string().required(),
@@ -20,23 +20,22 @@ router.post(
       image: Joi.string().custom(validateURL).required(),
       trailer: Joi.string().custom(validateURL).required(),
       thumbnail: Joi.string().custom(validateURL).required(),
-      movieId: Joi.string().required(),
+      movieId: Joi.number().required(),
       nameRU: Joi.string().required(),
       nameEN: Joi.string().required(),
     }),
   }),
-  auth,
   createMovie,
 );
 
 router.delete(
   '/movies/:movieId',
+  auth,
   celebrate({
     params: Joi.object().keys({
       movieId: Joi.string().min(24).required().hex(),
     }),
   }),
-  auth,
   deleteMovie,
 );
 

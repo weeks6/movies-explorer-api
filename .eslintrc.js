@@ -10,7 +10,5 @@ module.exports = {
   },
   rules: {
     'no-underscore-dangle': [1, { allow: ['_id', '_doc'] }],
-    // игнорирование неиспользуемой next() в централизованной обработке ошибок
-    'no-unused-vars': ['error', { argsIgnorePattern: 'next' }],
   },
 };

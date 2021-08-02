@@ -6,7 +6,13 @@ const ValidationError = require('../errors/ValidationError');
 const ConflictError = require('../errors/ConflictError');
 const NotFoundError = require('../errors/NotFoundError');
 
-const { DEV_SECRET } = require('../utils/constants');
+const { DEV_SECRET, JWT_EXPIRATION } = require('../utils/constants');
+const {
+  EMAIL_USED,
+  AUTH_SUCCESS,
+  WRONG_EMAIL,
+  NOT_FOUND,
+} = require('../utils/errorMessages');
 
 const { JWT_SECRET = DEV_SECRET } = process.env;
 
@@ -33,7 +39,7 @@ const createUser = async (req, res, next) => {
     res.status(201).send(createdUser);
   } catch (err) {
     if (err.name === 'MongoError' && err.code === 11000) {
-      next(new ConflictError('При создании пользователя что-то пошло не так'));
+      next(new ConflictError(EMAIL_USED));
     }
 
     if (err.name === 'ValidationError') {
@@ -56,12 +62,12 @@ const signIn = async (req, res, next) => {
       },
       JWT_SECRET,
       {
-        expiresIn: '7d',
+        expiresIn: JWT_EXPIRATION,
       },
     );
 
     res.send({
-      message: 'Авторизация успешна',
+      message: AUTH_SUCCESS,
       token,
     });
   } catch (err) {
@@ -77,7 +83,7 @@ const currentUser = async (req, res, next) => {
     const user = await User.findOne({ _id });
 
     if (!user) {
-      throw new NotFoundError('Не найдено');
+      throw new NotFoundError(NOT_FOUND);
     }
 
     res.send(user);
@@ -107,7 +113,7 @@ const updateCurrentUser = async (req, res, next) => {
     }
 
     if (err.name === 'MongoError' && err.code === 11000) {
-      next(new ConflictError('При создании пользователя что-то пошло не так'));
+      next(new ConflictError(WRONG_EMAIL));
     }
 
     next(err);
