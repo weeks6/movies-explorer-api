@@ -13,6 +13,7 @@ const limiter = require('./middlewares/rateLimiter');
 
 const appRouter = require('./routes/index');
 const { MONGO_CONNECTION, DEFAULT_PORT } = require('./utils/constants');
+const auth = require('./middlewares/auth');
 
 const { PORT = DEFAULT_PORT } = process.env;
 const { DB_CONNECTION = MONGO_CONNECTION } = process.env;
@@ -39,7 +40,7 @@ app.use(appRouter);
 
 // ошибки
 app.use(errorLogger);
-app.use(notFound);
+app.use(auth, notFound);
 app.use(errors());
 app.use(errorHandler);
 
